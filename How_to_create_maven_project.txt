@@ -1,0 +1,160 @@
+Steps: to create maven project on eclipse
+
+1/ Download Java JDK (recommend using java 8 or java 11)
+2/ Download Maven
+3/ Set JAVA_HOME and MAVEN_HOME in System Variable
+JAVA_HOME=C:\Program Files\Java\jdk-11.0.16
+MAVEN_HOME=D:\PHANMEM\apache-maven-3.8.5
+Path=%JAVA_HOME%\bin and %MAVEN_HOME%\bin
+4/ Open cmd and check if Java and Maven is ready to use
+java -version
+mvn -version
+5/ Go to https://www.eclipse.org/downloads/packages/
+Download Eclipse IDE for Java Developers
+6/ Open Eclipse and select your workspace (workspace pop up)
+7/ Create Maven project by 2 ways:
+Way 1: Create Java project then convert  it to Maven project
+Way 2: Create maven project directly (recommend this way)
+File -> New -> Project -> Maven -> Maven Project -> Next -> Check Create a Simple Project -> Check Use Default workspace location
+-> Next -> Input any GroupId and ArtifactId -> Version = 0.01-SNAPSHOT -> Packaging = jar -> Input Name
+-> Click Next 
+
+Expect: new maven project is created with structure include: src/main, src/test, pom.xml
+8/ Open pom.xml
+9/ Add maven compiler: https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-source-and-target.html
+Copy and paste the below to pom.xml
+
+<build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build> 
+  
+
+
+Note: The <source> and <target> should be version of java jdk installed from step 1
+if in step 1 you install java 8 then <source> and <target> = 1.8. Otherwise, if java 11 then <source> and <target> = 11
+
+10/ Right click on project name -> Maven -> Update Project -> Click OK 
+Expect: In JRE System Library -> It updates to JavaSE-XX (XX is the same version in step 1 and 9)
+
+DEBUG: JRE System Library -> IF it does not update to JavaSE-XX:
+Go to Window (in tool bar) -> Preferences -> Java -> Installed JRE -> Add -> Standard VM -> Find your Java JDK location then select
+-> In Installed JRE , remember to select JDK that just added -> Apply and Close
+
+
+11/ If you face some issues related to "Failed to transfer org.apache.maven.plugins..."
+This problem may due to you are behind proxy. so you need to add proxy to maven in eclipse
+
+Solution: add proxy to your maven settings.xml and add to eclipse
+
+Steps: 
+
+a) Find your maven settings.xml file location
+https://kkjavatutorials.com/how-to-add-or-update-the-maven-settings-xml-file-in-eclipse/
+
+Location of Maven Settings.xml File:
+=> The Maven installation directory: $MAVEN_HOME/conf/settings.xml [global settings] (we will use this file)
+=> The user’s home directory: ${user. home}/. m2/settings. xml  [user settings]
+
+b)
+Open the maven settings.xml file in $MAVEN_HOME/conf/settings.xml then follow this link to set proxy
+https://maven.apache.org/guides/mini/guide-proxies.html
+
+  <proxies>
+   <proxy>
+      <id>example-proxy</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <host>proxy.example.com</host>
+      <port>8080</port>
+      <username>proxyuser</username>
+      <password>somepassword</password>
+      <nonProxyHosts>www.google.com|*.example.com</nonProxyHosts>
+    </proxy>
+  </proxies>
+  
+c) SAVE
+d) Go to Eclipse, Window (in tool bar) -> Preferences -> Maven -> User Settings -> In Global Settings 
+-> Browse to the location of Maven Settings.xml File from step a) then click Apply and Close
+
+HOPE THAT ISSUE IS SOLVED :)
+
+12/ Add maven surefire plugin to run test and generate report: https://maven.apache.org/surefire/maven-surefire-plugin/examples/testng.html
+Copy the section in Using Suite XML Files and paste the below to pom.xml
+
+<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M7</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+	  
+	  
+DEBUG: If you face some issues related to "Failed to transfer org.apache.maven.plugins... surefire plugin"
+Follow solution in this link: https://stackoverflow.com/questions/56345168/failure-to-transfer-org-apache-maven-pluginsmaven-surefire-pluginpom2-22-2-fr
+
+
+13/ Test if you Maven project is ready to use:
+Go to Maven repository -> select some dependencies such as: Selenium or testng
+-> Copy and paste dependency to POM.xml
+-> Ctrl S to save
+-> Maven Dependencies in the Package Explorer is created
+-> Open Maven Dependencies and check if selenium is download 
+-> if it is downloaded then your maven project is ready to use
+
+
+NOTE: IF YOU ARE USING VISUAL STUDIO CODE TO CREATE MAVEN Project and need proxy for Maven in Visual Studio\
+Solution: add proxy to your maven settings.xml and add to Visual
+
+Steps: 
+
+a) Find your maven settings.xml file location
+https://kkjavatutorials.com/how-to-add-or-update-the-maven-settings-xml-file-in-eclipse/
+
+Location of Maven Settings.xml File:
+=> The Maven installation directory: $MAVEN_HOME/conf/settings.xml [global settings] (we will use this file)
+=> The user’s home directory: ${user. home}/. m2/settings. xml  [user settings]
+
+b)
+Open the maven settings.xml file in $MAVEN_HOME/conf/settings.xml then follow this link to set proxy
+https://maven.apache.org/guides/mini/guide-proxies.html
+
+  <proxies>
+   <proxy>
+      <id>example-proxy</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <host>proxy.example.com</host>
+      <port>8080</port>
+      <username>proxyuser</username>
+      <password>somepassword</password>
+      <nonProxyHosts>www.google.com|*.example.com</nonProxyHosts>
+    </proxy>
+  </proxies>
+  
+c) SAVE
+d) Go to Visual Stuido Code => Ctrl Shift P 
+=> Click Prefernces: Open User Settings (JSON)
+=> Add 2 lines:
+java.configuration.maven.globalSettings": "D:\\PHANMEM\\apache-maven-3.8.5\\conf\\settings.xml",
+    "java.configuration.maven.userSettings": "D:\\PHANMEM\\apache-maven-3.8.5\\conf\\settings.xml",
+	
+	OR
+	
+	
+java.configuration.maven.globalSettings": "D:\\PHANMEM\\apache-maven-3.8.5\\conf",
+    "java.configuration.maven.userSettings": "D:\\PHANMEM\\apache-maven-3.8.5\\conf",
+	
